@@ -264,7 +264,7 @@
     }
     function getAllAjax(){
         $.ajax({
-            "url": "http://127.0.0.1:5000/orders",
+            "url": host+"/orders",
             "method":"GET",
             "data":"",
             "dataType": "JSON",
@@ -285,7 +285,7 @@
         //var car = {"reg":"12 D 1234","make":"Fiat","model":"Punto","price":3000}
         console.log(JSON.stringify(orders));
         $.ajax({
-            "url": "http://127.0.0.1:5000/orders",
+            "url": host+"/orders",
             "method":"POST",
             "data":JSON.stringify(orders),
             "dataType": "JSON",
@@ -306,7 +306,7 @@
         //var car = {"reg":"12 D 1234","price":8000}
         console.log(JSON.stringify(orders));
         $.ajax({
-            "url": "http://127.0.0.1:5000/order/"+encodeURI(orders.id),
+            "url": host+"/order/"+encodeURI(orders.id),
             "method":"PUT",
             "data":JSON.stringify(orders),
             "dataType": "JSON",
@@ -324,7 +324,7 @@
         
         //console.log(JSON.stringify('deleting '+id));
         $.ajax({
-            "url": "http://127.0.0.1:5000/order/"+encodeURI(id),
+            "url": host+"/order/"+encodeURI(id),
             "method":"DELETE",
             "data":"",
             "dataType": "JSON",
@@ -334,7 +334,8 @@
                   
             },
             "error":function(xhr,status,error){
-                console.log("error: "+status+" msg:"+error);
+               // console.log("error: "+status+" msg:"+error);
+			   console.log(host);
             }
         });
     }
