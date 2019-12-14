@@ -96,9 +96,8 @@
 <!-- the navigation buttons for the website styled using the class button-->
 	<div>
 		<a href="home.html" class="button">Basil & Spice Homepage</a>
-		<a href="aboutgalway.html" class="button">Galway pics & plots</a>
 		<a href="menu.html" class="button">Staff Login</a>
-		<a href="order.html" class="button">o</a>
+		<a href="order.html" class="button">Orders</a>
 		<br><br>	 
 	</div >	
 
@@ -143,6 +142,7 @@
 	
 </body>
     <script>
+	host=window.location.origin
     function showCreate(){
         document.getElementById('showCreateButton').style.display="none"
         document.getElementById('menuTable').style.display="none"
@@ -269,7 +269,7 @@
     }
     function getAllAjax(){
         $.ajax({
-            "url": "http://127.0.0.1:5000/menu",
+            "url": host+"/menu",
             "method":"GET",
             "data":"",
             "dataType": "JSON",
@@ -290,7 +290,7 @@
         //var car = {"reg":"12 D 1234","make":"Fiat","model":"Punto","price":3000}
         console.log(JSON.stringify(menu));
         $.ajax({
-            "url": "http://127.0.0.1:5000/menu",
+            "url": host+"/menu",
             "method":"POST",
             "data":JSON.stringify(menu),
             "dataType": "JSON",
@@ -311,7 +311,7 @@
         //var car = {"reg":"12 D 1234","price":8000}
         console.log(JSON.stringify(menu));
         $.ajax({
-            "url": "http://127.0.0.1:5000/menu/"+encodeURI(menu.id),
+            "url": host+"/menu/"+encodeURI(menu.id),
             "method":"PUT",
             "data":JSON.stringify(menu),
             "dataType": "JSON",
@@ -329,7 +329,7 @@
         
         //console.log(JSON.stringify('deleting '+id));
         $.ajax({
-            "url": "http://127.0.0.1:5000/menu/"+encodeURI(id),
+            "url": host+"/menu/"+encodeURI(id),
             "method":"DELETE",
             "data":"",
             "dataType": "JSON",
@@ -339,7 +339,8 @@
                   
             },
             "error":function(xhr,status,error){
-                console.log("error: "+status+" msg:"+error);
+                //console.log("error: "+status+" msg:"+error);
+				console.log(host);
             }
         });
     }
