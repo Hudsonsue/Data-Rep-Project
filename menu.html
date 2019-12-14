@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title> Menu</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+       
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+	
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+   
+
+   
+	<style>
+
+		* {
+		  box-sizing: border-box;
+		}
+		
+		/* body style - style the overall body style*/
+		body {
+		  background-color: lightcyan;
+		  font-family: Sans Serif, Helvetica;
+		}
+
+		/* Style the header area of web page */
+		.header {
+		width:100%;
+			float:none;
+			background-color:lightcyan;
+			padding: 10px;
+			text-align: center;
+			width:100%
+			font-size: 55px;
+			margin: auto;
+			
+		}
+
+
+
+		/* BUTTON STYLING - buttons for navigation bar and other selections - including transitions when hovered over*/		.button{
+			float:left;
+			appearance: button;
+			display: block-align;
+			border: solid;
+			border-width: 10px;
+			padding: 15px 32px;
+			text-align: center;
+			text-decoration: none;
+			font-size: 16px;
+			font-style:sans serif
+			font-color: green;
+		}
+		
+	
+		
+		
+		/* default button appearance - lightcyan with green text */	
+		.button {
+		  text-decoration: none;
+		  background-color: lightcyan; 
+		  color: green; 
+		  border-width: 10px;
+		  border: 25px;
+		}
+		
+		/* upon hover button appears as navy with an green border and text */
+		.button:hover {
+		  text-decoration: none;
+		  background-color: mint green;
+		  border: solid;
+		  border-width: 5px;
+		  color: green;
+		}
+		
+		
+	
+		
+	.greentext {
+	background-color: mint;
+	color: green;
+}
+
+	</style>
+</head>
+<body>
+
+<!-- this section contains the header which is an image-->
+<div class="header" >
+
+<img style="border:5px solid green" src ="images/Basil & Spice.png" alt = "logo"  title ="logo" >	
+
+
+</div>	
+<!-- the navigation buttons for the website styled using the class button-->
+	<div>
+		<a href="home.html" class="button">Basil & Spice Homepage</a>
+		<a href="aboutgalway.html" class="button">Galway pics & plots</a>
+		<a href="menu.html" class="button">Staff Login</a>
+		<a href="order.html" class="button">o</a>
+		<br><br>	 
+	</div >	
+
+	<div>
+	<br>
+        <h1 class="greentext" style="text-align: center" > Menu Maintenance </h1>
+        <div> <button id="showCreateButton" class="button"onclick="showCreate()">Create New Item</button></div>
+        <div>
+            <table class="table" id="menuTable">
+                <tr>
+                        <th>id</th>
+                        <th>Item</th>
+                        <th>About</th>
+                        <th>Price</th>
+                        <th>Update </th>
+                        <th>Delete</th>
+                </tr>
+                
+            </table>
+        </div>	
+	</div>	
+	<fieldset style="width:50%">
+	
+	<form>
+		
+		
+		<fieldset>
+		<form>
+	    <div id='createUpdateForm' style="display: none">
+                <h2class="greentext" ><span id="createLabel">Create a new item for the </span> <span id="updateLabel">Update</span> Menu</h2>
+                <input type="hidden" name="id"/>
+				<br>
+                Item <input type="text" name="Item" required /><br/>
+                About <input type="text" name="About"/> <br/>
+                Price <input type="text" name="Price"/> <br/></br>
+                <span><button id="doCreateButton" class="button" onclick="doCreate()">Create</button></span>
+                <span><button id="doUpdateButton" class="button"onclick="doUpdate()">Update</button></span>
+        </div>
+		 
+	</form>
+	</fieldset>
+	
+</body>
+    <script>
+    function showCreate(){
+        document.getElementById('showCreateButton').style.display="none"
+        document.getElementById('menuTable').style.display="none"
+        document.getElementById('createUpdateForm').style.display="block"
+
+        document.getElementById('createLabel').style.display="inline"
+        document.getElementById('updateLabel').style.display="none"
+
+        document.getElementById('doCreateButton').style.display="block"
+        document.getElementById('doUpdateButton').style.display="none"
+
+    }
+    function showViewAll(){
+        document.getElementById('showCreateButton').style.display="block"
+        document.getElementById('menuTable').style.display="block"
+        document.getElementById('createUpdateForm').style.display="none"
+    }
+    function showUpdate(buttonElement){
+        document.getElementById('showCreateButton').style.display="none"
+        document.getElementById('menuTable').style.display="none"
+        document.getElementById('createUpdateForm').style.display="block"
+
+        document.getElementById('createLabel').style.display="none"
+        document.getElementById('updateLabel').style.display="inline"
+
+        document.getElementById('doCreateButton').style.display="none"
+        document.getElementById('doUpdateButton').style.display="block"
+
+
+        var rowElement = buttonElement.parentNode.parentNode
+        // these is a way of finding the closest <tr> which would safer, closest()
+        
+        var menu = getMenuFromRow(rowElement)
+        populateFormWithMenu(menu)
+    }
+    function doCreate(){
+        var form = document.getElementById('createUpdateForm')
+
+        var menu = {}
+       
+        menu.Item = form.querySelector('input[name="Item"]').value
+        menu.About = form.querySelector('input[name="About"]').value
+        menu.Price = form.querySelector('input[name="Price"]').value
+        console.log(JSON.stringify(menu))
+        createMenuAjax(menu)
+        
+        
+    }
+    function doUpdate(){
+        var menu = getMenuFromForm();
+        var rowElement = document.getElementById(menu.id);
+        updateMenuAjax(menu);
+        setMenuInRow(rowElement,menu);
+       
+        clearForm();
+        showViewAll();
+    }
+    function doDelete(r){
+        var tableElement = document.getElementById('menuTable');
+        var rowElement = r.parentNode.parentNode;
+        var index = rowElement.rowIndex;
+        deleteMenuAjax(rowElement.getAttribute("id"));
+        tableElement.deleteRow(index);
+    }
+    function addMenuToTable(menu){
+        var tableElement = document.getElementById('menuTable')
+        var rowElement = tableElement.insertRow(-1)
+        rowElement.setAttribute('id',menu.id)
+        var cell1 = rowElement.insertCell(0);
+        cell1.innerHTML = menu.id
+        var cell2 = rowElement.insertCell(1);
+        cell2.innerHTML = menu.Item
+        var cell3 = rowElement.insertCell(2);
+        cell3.innerHTML = menu.About
+        var cell4 = rowElement.insertCell(3);
+        cell4.innerHTML = menu.Price
+        var cell5 = rowElement.insertCell(4);
+        cell5.innerHTML = '<button onclick="showUpdate(this)">Update</button>'
+        var cell6 = rowElement.insertCell(5);
+        cell6.innerHTML = '<button onclick=doDelete(this)>Delete</button>'
+
+    }
+
+    function clearForm(){
+        var form = document.getElementById('createUpdateForm')
+
+        form.querySelector('input[name="Item"]').value=''
+        form.querySelector('input[name="About"]').value=''
+        form.querySelector('input[name="Price"]').value=''
+    }
+    function getMenuFromRow(rowElement){
+        var menu ={}  /// changed from car
+        menu.id  = rowElement.getAttribute('id')
+        menu.Item = rowElement.cells[1].firstChild.textContent
+        menu.About = rowElement.cells[2].firstChild.textContent
+        menu.Price = parseInt(rowElement.cells[3].firstChild.textContent,10)
+        return menu
+    }
+    function setMenuInRow(rowElement, menu){
+        rowElement.cells[0].firstChild.textContent= menu.id  
+        rowElement.cells[1].firstChild.textContent= menu.Item 
+        rowElement.cells[2].firstChild.textContent= menu.About
+        rowElement.cells[3].firstChild.textContent= menu.Price
+    }
+    function populateFormWithMenu(menu){
+        var form = document.getElementById('createUpdateForm')
+        form.querySelector('input[name="id"]').disabled = true
+
+        form.querySelector('input[name="id"]').value  = menu.id
+        form.querySelector('input[name="Item"]').value= menu.Item
+        form.querySelector('input[name="About"]').value= menu.About
+        form.querySelector('input[name="Price"]').value= menu.Price
+        return menu
+    }
+    function getMenuFromForm(){
+        var form = document.getElementById('createUpdateForm')
+        var menu = {}
+        menu.id = form.querySelector('input[name="id"]').value
+        menu.Item = form.querySelector('input[name="Item"]').value
+        menu.About = form.querySelector('input[name="About"]').value
+        menu.Price = parseInt(form.querySelector('input[name="Price"]').value,10)
+        console.log(JSON.stringify(menu))
+        return menu
+    }
+    function getAllAjax(){
+        $.ajax({
+            "url": "http://127.0.0.1:5000/menu",
+            "method":"GET",
+            "data":"",
+            "dataType": "JSON",
+            "success":function(result){
+                //console.log(result);
+                for (menu of result){
+                    addMenuToTable(menu);
+                }
+                
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+
+    }
+    function createMenuAjax(menu){
+        //var car = {"reg":"12 D 1234","make":"Fiat","model":"Punto","price":3000}
+        console.log(JSON.stringify(menu));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/menu",
+            "method":"POST",
+            "data":JSON.stringify(menu),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                menu.id = result.id
+                addMenuToTable(menu)
+                clearForm()
+                showViewAll()
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    function updateMenuAjax(menu){
+        //var car = {"reg":"12 D 1234","price":8000}
+        console.log(JSON.stringify(menu));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/menu/"+encodeURI(menu.id),
+            "method":"PUT",
+            "data":JSON.stringify(menu),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+               // console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    function deleteMenuAjax(id){
+        
+        //console.log(JSON.stringify('deleting '+id));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/menu/"+encodeURI(id),
+            "method":"DELETE",
+            "data":"",
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    getAllAjax();
+  
+ 
+
+</script>
+</html>
