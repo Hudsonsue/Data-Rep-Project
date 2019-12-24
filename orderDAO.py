@@ -7,12 +7,13 @@ class OrderDAO:
         host="localhost",
         user="root",
         password="root",
-		database="datarepresentation"
+        database="datarepresentation"
 		)
-
-    def create(self, values):
+		
+		
+    def createOrders(self, values):
         cursor = self.db.cursor()
-        sql="insert into orders (Item, About,Quantity) values (%s,%s,%s)"
+        sql="insert into orders (Item, About, Quantity) values (%s,%s,%s)"
         cursor.execute(sql, values)
 
         self.db.commit()
@@ -24,14 +25,14 @@ class OrderDAO:
         cursor.execute(sql)
         results = cursor.fetchall()
         returnArray = []
-        print(results)
         for result in results:
             print(result)
             returnArray.append(self.convertToDictionary(result))
 
+
         return returnArray
 
-    def findByID(self, id):
+    def findByIDOrders(self, id):
         cursor = self.db.cursor()
         sql="select * from orders where id = %s"
         values = (id,)
@@ -40,25 +41,31 @@ class OrderDAO:
         result = cursor.fetchone()
         return self.convertToDictionary(result)
 
-    def update(self, values):
+    def updateOrders(self, values):
         cursor = self.db.cursor()
-        sql="update orders set quantity = %s where id = %s"
+        sql="update orders set Item= %s, About=%s, Quantity=%s  where id = %s"
         cursor.execute(sql, values)
         self.db.commit()
 		
-     
+    def deleteOrders(self, id):
+        cursor = self.db.cursor()
+        sql="delete from orders where id = %s"
+        values = (id,)
+
+        cursor.execute(sql, values)
+
+        self.db.commit()
+        print("delete done")
+
     def convertToDictionary(self, result):
-	 
-	 
-        colnames=[ 'id','Item','About', "Quantity"]
+        colnames=['id','Item','About', 'Quantity']
         item = {}
         
         if result:
             for i, colName in enumerate(colnames):
                 value = result[i]
                 item[colName] = value
+        
         return item
-		
-
         
 orderDAO = OrderDAO()

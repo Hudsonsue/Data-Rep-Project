@@ -25,7 +25,6 @@ class MenuDAO:
         cursor.execute(sql)
         results = cursor.fetchall()
         returnArray = []
-        print(results)
         for result in results:
             print(result)
             returnArray.append(self.convertToDictionary(result))
@@ -52,21 +51,17 @@ class MenuDAO:
         cursor = self.db.cursor()
         sql="delete from menu where id = %s"
         values = (id,)
-
         cursor.execute(sql, values)
-
         self.db.commit()
         print("delete done")
 
     def convertToDictionary(self, result):
         colnames=['id','Item','About', "Price"]
         item = {}
-        
         if result:
             for i, colName in enumerate(colnames):
                 value = result[i]
                 item[colName] = value
-        
         return item
         
 menuDAO = MenuDAO()

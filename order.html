@@ -96,14 +96,15 @@
 </div>	
 <!-- the navigation buttons for the website styled using the class button-->
 <div>
-		<a href="home.html" class="button">Basil & Spice Homepage</a>
-		<a href="menu.html" class="button">Staff Login</a>
-		<a href="order.html" class="button">Orders</a>
+		<a href="../home.html" class="button">Basil & Spice Homepage</a>
+		
+		
 		<br><br>	 
 	</div >
 
 	<div>
 	<br>
+	
         <h1 class="greentext" style="text-align: center" > Orders Online </h1>
         <div> <button id="showCreateButton" class="button"onclick="showCreate	()">Select Orders Items</button></div>
         <div>
@@ -113,6 +114,8 @@
                         <th>Item</th>
                         <th>About</th>
                         <th>Quantity </th>
+						<th>Amend </th>
+                        <th>Delete</th>
                         
                 </tr>
                 
@@ -127,21 +130,20 @@
 		<fieldset>
 		<form>
 	    <div id='createUpdateForm' style="display: none">
-                <h2 class="greentext" ><span id="createLabel">Create a new item for the </span> <span id="updateLabel">Update</span> Orders</h2>
+                <h2 class="greentext" ><span id="createLabel">Enter your items to </span> <span id="updateLabel">Update</span> orders</h2>
                 <input type="hidden" name="id"/>
 				<br>
-                Item <input type="text" name="Item" required /><br/>
-                About <input type="text" name="About"/> <br/>
-                Quantity<input type="text" name="Quantity"/> <br/></br>
+                Item<input type="text" name="Item"/><br>
+				About<input type="text" name="About"/> <br>
+                Quantity<input type="text" name="Quantity"/> <br><br>
 				<span><button id="doCreateButton" class="button" onclick="doCreate()">Create</button></span>
                 <span><button id="doUpdateButton" class="button"onclick="doUpdate()">Update</button></span>
                  
-                
+        </form>       
         </div>
 		 
-	</form>
 	</fieldset>
-	
+ 
 </body>
     <script>
     function showCreate(){
@@ -195,11 +197,18 @@
     function doUpdate(){
         var orders = getOrdersFromForm();
         var rowElement = document.getElementById(orders.id);
-        updateAjax(orders);
+        updateOrdersAjax(orders);
         setOrdersInRow(rowElement,orders);
        
         clearForm();
         showViewAll();
+    }
+	   function doDelete(r){
+        var tableElement = document.getElementById('ordersTable');
+        var rowElement = r.parentNode.parentNode;
+        var index = rowElement.rowIndex;
+        deleteOrdersAjax(rowElement.getAttribute("id"));
+        tableElement.deleteRow(index);
     }
     
     
@@ -216,7 +225,9 @@
         var cell4 = rowElement.insertCell(3);
         cell4.innerHTML = orders.Quantity
 		var cell5 = rowElement.insertCell(4);
-        cell5innerHTML = '<button onclick=doDelete(this)>Delete</button>'
+			cell5.innerHTML = '<button onclick="showUpdate(this)">Update Item</button>'
+        var cell6 = rowElement.insertCell(5);
+        cell6.innerHTML = '<button onclick=doDelete(this)>Delete Item</button>'
 
     }
 
@@ -233,14 +244,14 @@
         orders.Item = rowElement.cells[1].firstChild.textContent
         orders.About = rowElement.cells[2].firstChild.textContent
         orders.Quantity = parseInt(rowElement.cells[3].firstChild.textContent,10)
-        return orders.Quantity = parseInt(rowElement.cells[3].firstChild.textContent,10)
+        return orders
     }
     function setOrdersInRow(rowElement, orders){
         rowElement.cells[0].firstChild.textContent= orders.id  
         rowElement.cells[1].firstChild.textContent= orders.Item 
         rowElement.cells[2].firstChild.textContent= orders.About
-       
-		rowElement.cells[3].firstChild.textContent= orders.Quantity
+       	rowElement.cells[3].firstChild.textContent= orders.Quantity
+		
     }
     function populateFormWithOrders(orders){
         var form = document.getElementById('createUpdateForm')
@@ -264,7 +275,7 @@
     }
     function getAllAjax(){
         $.ajax({
-            "url": host+"/orders",
+            "url": "http://127.0.0.1:5000/orders",
             "method":"GET",
             "data":"",
             "dataType": "JSON",
@@ -285,7 +296,7 @@
         //var car = {"reg":"12 D 1234","make":"Fiat","model":"Punto","price":3000}
         console.log(JSON.stringify(orders));
         $.ajax({
-            "url": host+"/orders",
+            "url": "http://127.0.0.1:5000/orders",
             "method":"POST",
             "data":JSON.stringify(orders),
             "dataType": "JSON",
@@ -306,7 +317,7 @@
         //var car = {"reg":"12 D 1234","price":8000}
         console.log(JSON.stringify(orders));
         $.ajax({
-            "url": host+"/order/"+encodeURI(orders.id),
+            "url": "http://127.0.0.1:5000/order/"+encodeURI(orders.id),
             "method":"PUT",
             "data":JSON.stringify(orders),
             "dataType": "JSON",
@@ -324,7 +335,7 @@
         
         //console.log(JSON.stringify('deleting '+id));
         $.ajax({
-            "url": host+"/order/"+encodeURI(id),
+            "url": "http://127.0.0.1:5000/order/"+encodeURI(id),
             "method":"DELETE",
             "data":"",
             "dataType": "JSON",
@@ -334,8 +345,7 @@
                   
             },
             "error":function(xhr,status,error){
-               // console.log("error: "+status+" msg:"+error);
-			   console.log(host);
+                console.log("error: "+status+" msg:"+error);
             }
         });
     }

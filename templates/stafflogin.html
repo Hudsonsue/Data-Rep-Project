@@ -1,0 +1,281 @@
+	<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>staff login ></title>
+	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<!--	<script type="text/javascript" src="{{ url_for('static', filename='js/auth.js') }}"/> 
+		<script type="text/javascript">
+			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+		</script>-->
+		<link rel="icon" href="data:,">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<style>
+
+		* {
+		  box-sizing: borders-box;
+		}
+		
+		/* body style - style the overall body style*/
+		body {
+		  background-color: lightcyan;
+		  font-family: Sans Serif, Helvetica;
+		}
+
+		/* Style the header area of web page */
+		.header {
+		width:100%;
+			float:none;
+			background-color:lightcyan;
+			padding: 10px;
+			text-align: center;
+			width:100%
+			font-size: 55px;
+			margin: auto;
+			
+		}
+
+
+		/* BUTTON STYLING - buttons for navigation bar and other selections - including transitions when hovered over*/		.button{
+			float:left;
+			appearance: button;
+			display: block-align;
+			borders: solid;
+			borders-width: 10px;
+			padding: 15px 32px;
+			text-align: center;
+			text-decoration: none;
+			font-size: 16px;
+			font-style:sans serif
+			font-color: green;
+		}
+		
+	
+		
+		
+		/* default button appearance - lightcyan with green text */	
+		.button {
+		  text-decoration: none;
+		  background-color: lightcyan; 
+		  color: green; 
+		  borders-width: 10px;
+		  borders: 25px;
+		}
+		
+		/* upon hover button appears as navy with an green borders and text */
+		.button:hover {
+		  text-decoration: none;
+		  background-color: mint green;
+		  borders: solid;
+		  borders-width: 5px;
+		  color: green;
+		}
+		
+		
+	
+		
+	.greentext {
+	background-color: mint;
+	color: green;
+}
+
+		/* ID for div style for bottom of web page */
+		#myinfobar {
+		clear:both;
+		color: orange;
+		font-family: Lucida Handwriting;
+		background-color:navy;
+		text-align: center;
+		border:5px solid orange;
+		}
+		/* styling for input field set including thin orange border*/
+		fieldset{
+		position: relative;
+		float:left;
+		border: 1px solid orange;
+		background-color:lightcyan ;
+		padding: 15px;
+
+		}
+		/* style for map */
+		.maploc{
+		  clear:both;
+		  border: 15px;
+		  padding:20px;
+
+		}
+
+		/* to move input button to float right */
+		#pright{
+		float:right;
+		}
+
+	</style>
+</head>
+
+<body>
+	<!-- this section contains the header which is an image-->
+	<div class="header" >
+
+		<!---<img  style="border:5px solid orange"src ="images/Basil & Spice.png" alt = "logo"  title ="logo" >	-->
+	</div>	
+	<!-- the navigation buttons for the website styled using the class button-->
+		<div>
+			<a href="home.html" class="button">Basil & Spice Homepage</a>
+			<a href="menu.html" class="button">menu </a>
+			
+			<br><br>
+		</div>	
+<div>
+		<ul style="list-style: none; float: left;">
+			<li><a href="{{ url_for('.home_page') }}">Home</a></li>
+			<div id="sign">
+				<li><a href="#">Sign Up</a></li>
+				<li><a href="{{ url_for('.login_page') }}">Login</a></li>
+			</div>
+			<div id="logoff" style="display: none;">
+				<li><a href="#" id="logout">Log Off</a></li>
+			</div>
+		</ul>
+	</div>
+	<div class="row"></div>
+
+
+	<!-- below creates a form for entry of name, e mail and Date of Birth, e mail and DOB are validated -->	
+
+	 
+	<br><br><br><br>
+	
+	
+
+ 
+		
+	<!-- login page with validation, to check successful logon please use user and pword as login credentials. you will be redirected to a page that is not part of the navigation bar pages, the foodie club member page 	
+	<div id="loginform">
+			<h2>Login</h2>
+			<dl>
+				<p>
+					<input id="username" value="" type="text" placeholder="Username" required>
+				</p>
+				<p>
+					<input id="password" value="" type="password" placeholder="Password" autocomplete="off" required>
+				</p>
+			</dl>
+			<p>
+				<input type="button" id="loginSubmit" value="Submit" class="button" onclick="login();">
+			</p>
+		</div>
+<br><br><br>
+
+	<div class="row"></div> --->
+	
+	<fieldset  >
+	<legend text-color="orange"> Foodie Club Login!</legend>
+	<form id="form_id" method="post"  action ="home.html" name="myform">
+	 
+	 
+				<h1>food club login</h1>
+				<label> User Name :</label> <input type="text" name="username" id="username" />
+				
+				<label>Password :</label> <input type="password" name="password" id="password" />
+				<br> <br>
+				<input type="button" id ="pright" class = "button" value="Login" id="submit" onclick="loginAjax();" />
+	</form>
+	</fieldset>
+	 
+
+
+	
+	
+	<!--- below bottom section of web page with contact details and styled per ID myinfobar -->
+	<div  id="myinfobar">
+	<h1>
+		Basil & Spice<br><br>Contact us: 091 951455 / 085 1112744<br>A taste of the Med at 152, Quay Street in the heart of Ga</h1>		
+	</div>	
+	
+
+</body>
+<script>
+		
+	/*function loginAjax(){
+	var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+			
+            if (username == null || username == "") {
+                alert("Please enter the username.");
+                return false;
+            }
+            if (password == null || password == "") {
+                alert("Please enter the password.");
+                return false;
+            }	
+			if (username !== "user" || password !== "pword"){          // hardcoded values for demo, logon unsuccessful 
+				alert('Login unsuccessful, please try again!');			//when not these values
+				return false
+				
+			} 
+			alert('Login successful')
+				return window.location.href='foodieclub.html';
+		}
+*/
+	
+		
+	
+//function LoginAjax(username, password){
+ //     console.log(JSON.stringify(username, password));
+/ 
+ 
+ 
+	
+	function loginAjax(username, password){
+        $.ajax({
+            	"url": "http://127.0.0.1:5000/stafflogin",
+				"method": "POST",
+				contentType: 'application/json;charset=UTF-8',
+				"data": JSON.stringify({username,password}),
+				"dataType": "JSON",
+				"success": function(data) {
+					localStorage.setItem('loggedin', 1);
+						
+					$('#sign').hide();
+					$('#loginform').hide();
+					$('#logoff').show();
+					$('#msg').html('You are logged in</span>');
+				},
+				statusCode: {
+					400: function() {
+						$('#msg').html('<span style="color: red;">Bad request - invalid credentials</span>');
+					}
+				},
+				"error":function(xhr,status,error){
+					console.log("error: "+status+" msg:"+error);
+				}
+			});
+		}
+	} else {
+		$('#msg').html('<span style="color: red;">Invalid username and password</span>');
+	}
+});
+	
+	$('#logout').on('click', function(e) {
+		e.preventDefault();
+		
+		$.ajax({
+			url: '/logout',
+			dataType: "json",
+			success: function(data) {
+				localStorage.setItem('loggedin', 0);
+				$('#sign').show();
+				$('#logoff').hide();
+				$('#msg').html('<span style="color: green;">You are logged off</span>');
+			},
+			error: function(err) {
+				console.log(err);
+			}
+		});
+	});
+});  */
+</script>
+</html>	

@@ -1,8 +1,10 @@
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, session,  render_template
 from menuDAO import menuDAO
 from orderDAO import orderDAO
+from loginDAO import loginDAO
 
 app = Flask(__name__, static_url_path='', static_folder='.')
+app.secret_key = "secret key"
 
 #curl "http://127.0.0.1:5000/menu"
 @app.route('/menu')
@@ -15,7 +17,6 @@ def getAll():
 @app.route('/menu/<int:id>')
 def findById(id):
     foundMenu = menuDAO.findByID(id)
-
     return jsonify(foundMenu)
 
 #curl  -i -H "Content-Type:application/json" -X POST -d "{\"Item\":\"hello\",\"About\":\"someone\",\"Price\":123}" http://127.0.0.1:5000/menus
@@ -59,17 +60,17 @@ def update(id):
     menuDAO.update(values)
     return jsonify(foundMenu)
         
+   
 
-    
-
-@app.route('/menu/<int:id>' , methods=['DELETE'])
+@app.route('/menu/<int:id>' , methods=['DELETE'])	
 def delete(id):
     menuDAO.delete(id)
     return jsonify({"done":True})
 
 
+
 @app.route('/orders', methods=['POST'])
-def createOrder():
+def createOrders():
     
     if not request.json:
         abort(400)
@@ -81,38 +82,73 @@ def createOrder():
 		
     }
     values =(orders['Item'],orders['About'],orders['Quantity'])
-    newId = orderDAO.create(values)
+    newId = orderDAO.createOrders(values)
     orders['id'] = newId
     return jsonify(orders)
 
 
 @app.route('/orders')
 def getAllOrders():
-    #print("in getall")
     ordersResults = orderDAO.getAllOrders()
     return jsonify(ordersResults)
 	
-@app.route('/orders/<int:id>', methods=['PUT'])
+@app.route('/order/<int:id>', methods=['PUT'])
 def updateOrders(id):
-    foundOrders = orderDAO.findByID(id)
+    foundOrders = orderDAO.findByIDOrders(id)
     if not foundOrders:
         abort(404)
     
     if not request.json:
         abort(400)
     reqJson = request.json
-    
-	 # if 'Quantity' in reqJson and type(reqJson['Quantity']) is not int:
-      
+    if 'Quantity' in reqJson and type(reqJson['Quantity']) is not int:
+        abort(400)
     if 'Item' in reqJson:
         foundOrders['Item'] = reqJson['Item']
     if 'About' in reqJson:
         foundOrders['About'] = reqJson['About']
-     
+    if 'Quantity' in reqJson:
+        foundOrders['Quantity']=reqJson['Quantity']
+	     
 
-    values = (foundOrders['Item'],foundOrders['About'],foundOrders['id'], foundOrders[Quantity])
-    orderDAO.update(values)
-    return jsonify(foundOrders)	
+    values = (foundOrders['Item'],foundOrders['About'],foundOrders['Quantity'], foundOrders['id'])
+    orderDAO.updateOrders(values)
+    return jsonify(foundOrders)
+	
+@app.route('/order/<int:id>' , methods=['DELETE'])
+def deleteOrders(id):
+	orderDAO.deleteOrders(id)
+	return jsonify({"done":True})
+	
+##curl  -i -H "Content-Type:application/json" -X POST -d "{\"username\":\"suetest\",\"password\":\"spword\"}" http://127.0.0.1:5000/stafflogin
+
+@app.route('/stafflogin', methods=[ 'POST'])
+
+def login():
+	_json = request.json
+	#print(_json)
+	_username = _json['username']
+	_password = _json['password']
+	
+	if _username and _password:
+		user = loginDAO.login(_username, _password)
+		
+		if user != None:
+			session['username'] = user
+			return jsonify({'message' : 'User logged in successfully'})
+
+	resp = jsonify({'message' : 'Bad Request - invalid credendtials'})
+	resp.status_code = 400
+	return resp
+
+
+@app.route('/')
+def home_page():
+	return render_template('home.html')
+	
+@app.route('/stafflogin/page')
+def login_page():
+	return render_template('stafflogin.html')
 
 
 if __name__ == '__main__' :
